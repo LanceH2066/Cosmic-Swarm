@@ -1,0 +1,336 @@
+# depslib dependency file v1.0
+1745286611 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\main.cpp
+	"_scene.h"
+
+1745442659 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_bullet.cpp
+	"_Bullet.h"
+
+1745428684 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_collision.cpp
+	"_collision.h"
+
+1742505557 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_common.cpp
+
+1745441089 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_enemy.cpp
+	"_enemy.h"
+	<_enemyDrops.h>
+
+1745286754 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_inputs.cpp
+	"_inputs.h"
+
+1742450570 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_lightsetting.cpp
+	"_lightSetting.h"
+
+1742615647 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_model.cpp
+	"_model.h"
+
+1742586228 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_parallax.cpp
+	"_parallax.h"
+
+1745440449 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_player.cpp
+	"_player.h"
+
+1745443046 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_scene.cpp
+	"_scene.h"
+
+1742876942 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_sounds.cpp
+	"_sounds.h"
+
+1745437584 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_textureloader.cpp
+	"_textureLoader.h"
+
+1743796075 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_timer.cpp
+	"_timer.h"
+
+1742857509 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\main.cpp
+	"_scene.h"
+
+1744157466 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_bullet.cpp
+	"_Bullet.h"
+
+1744157466 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_collision.cpp
+	"_collision.h"
+
+1742515421 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_common.cpp
+
+1744157466 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_enemy.cpp
+	"_enemy.h"
+
+1742860354 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_inputs.cpp
+	"_inputs.h"
+
+1742515421 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_lightsetting.cpp
+	"_lightSetting.h"
+
+1742515421 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_model.cpp
+	"_model.h"
+
+1742515421 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_parallax.cpp
+	"_parallax.h"
+
+1744157466 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_player.cpp
+	"_player.h"
+
+1744147328 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_scene.cpp
+	"_scene.h"
+
+1742921423 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_sounds.cpp
+	"_sounds.h"
+
+1742515422 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_textureloader.cpp
+	"_textureLoader.h"
+
+1744157466 source:c:\users\heinr\onedrive\desktop\csci178\cosmic swarm\src\_timer.cpp
+	"_timer.h"
+
+1745437209 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_xporb.cpp
+	"_xpOrb.h"
+
+1745443697 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_scene.h
+	<_lightSetting.h>
+	<_model.h>
+	<_inputs.h>
+	<_parallax.h>
+	<_collision.h>
+	<_sounds.h>
+	<_Bullet.h>
+	<_xporb.h>
+	<_enemyDrops.h>
+	<SpatialHashGrid.h>
+	<_textureManager.h>
+
+1742450569 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_lightsetting.h
+	<_common.h>
+
+1745436014 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_common.h
+	<GL/glew.h>
+	<windows.h>
+	<Winuser.h>
+	<iostream>
+	<algorithm>
+	<stdlib.h>
+	<vector>
+	<gl/gl.h>
+	<GL/glut.h>
+	<time.h>
+	<math.h>
+	<string>
+	<memory>
+	<time.h>
+	<fstream>
+	<map>
+
+1744316019 c:\users\lance heinrich\desktop\csci 178\common\include\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1739418232 c:\users\lance heinrich\desktop\csci 178\common\include\gl\glut.h
+	<windows.h>
+	<stdlib.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1742450569 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_model.h
+	<_common.h>
+	<_textureLoader.h>
+
+1745437593 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_textureloader.h
+	<_common.h>
+	<SOIL.h>
+
+1739418232 c:\users\lance heinrich\desktop\csci 178\common\include\soil.h
+
+1742876063 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_inputs.h
+	<_common.h>
+	<_model.h>
+	<_parallax.h>
+	<_player.h>
+	<_sounds.h>
+
+1742506976 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_parallax.h
+	<_common.h>
+	<_textureLoader.h>
+	<_timer.h>
+
+1743796061 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_timer.h
+	"_common.h"
+
+1745443176 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_player.h
+	<_common.h>
+	<_Bullet.h>
+	<_sounds.h>
+	<_textureManager.h>
+
+1745442615 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_bullet.h
+	<_common.h>
+	<_timer.h>
+	<_enemy.h>
+	<_weapon.h>
+
+1742876370 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_sounds.h
+	<SNDS/irrKlang.h>
+	<_common.h>
+	<vector>
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\irrklang.h
+	"ik_irrKlangTypes.h"
+	"ik_vec3d.h"
+	"ik_IRefCounted.h"
+	"ik_IVirtualRefCounted.h"
+	"ik_ESoundOutputDrivers.h"
+	"ik_ESoundEngineOptions.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+	"ik_ISoundEngine.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_IAudioStream.h"
+	"ik_IAudioStreamLoader.h"
+	"ik_ISoundEffectControl.h"
+	"ik_ISoundStopEventReceiver.h"
+	"ik_IFileFactory.h"
+	"ik_IFileReader.h"
+	"ik_ISoundDeviceList.h"
+	"ik_IAudioRecorder.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_irrklangtypes.h
+	<wchar.h>
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_vec3d.h
+	<math.h>
+	"ik_irrKlangTypes.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_irefcounted.h
+	"ik_irrKlangTypes.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_ivirtualrefcounted.h
+	"ik_irrKlangTypes.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_esoundoutputdrivers.h
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_esoundengineoptions.h
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_estreammodes.h
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_saudiostreamformat.h
+	"ik_IRefCounted.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_isoundengine.h
+	"ik_IRefCounted.h"
+	"ik_vec3d.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_EStreamModes.h"
+	"ik_IFileFactory.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_isoundsource.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_isound.h
+	"ik_IVirtualRefCounted.h"
+	"ik_ISoundEffectControl.h"
+	"ik_vec3d.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_isoundeffectcontrol.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_ifilefactory.h
+	"ik_IRefCounted.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_isoundmixedoutputreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_iaudiostream.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_iaudiostreamloader.h
+	"ik_IRefCounted.h"
+	"ik_IFileReader.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_ifilereader.h
+	"ik_IRefCounted.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_isoundstopeventreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_isounddevicelist.h
+	"ik_IRefCounted.h"
+
+1742450570 c:\users\lance heinrich\desktop\csci 178\common\include\snds\ik_iaudiorecorder.h
+	"ik_IRefCounted.h"
+	"ik_ISoundSource.h"
+
+1745436762 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_enemy.h
+	<_common.h>
+	<_timer.h>
+	<_textureManager.h>
+	<_particleSystem.h>
+	<_xporb.h>
+
+1744581836 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_collision.h
+	<_common.h>
+	<_Bullet.h>
+	<_enemy.h>
+	<_xporb.h>
+	<_player.h>
+
+1745437213 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_xporb.h
+	<_common.h>
+	<_textureLoader.h>
+
+1744397935 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_particle.cpp
+	"_particle.h"
+
+1744397726 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_particle.h
+	<_common.h>
+
+1745440178 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_particlesystem.cpp
+	"_particleSystem.h"
+
+1744856992 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_particlesystem.h
+	<_particle.h>
+	<_textureLoader.h>
+
+1744931121 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_weapon.h
+	"_common.h"
+	"_textureLoader.h"
+	"_timer.h"
+	"_enemy.h"
+
+1745439500 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_enemydrops.h
+	<_common.h>
+	<_textureLoader.h>
+
+1745438957 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\_enemydrops.cpp
+	<_enemyDrops.h>
+
+1745430043 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\spatialhashgrid.h
+	<unordered_map>
+	<vector>
+	<utility>
+	<cmath>
+	<_common.h>
+	"_enemy.h"
+	<set>
+
+1745430069 source:c:\users\lance heinrich\desktop\csci 178\cosmic swarm\src\spatialhashgrid.cpp
+
+1745435107 c:\users\lance heinrich\desktop\csci 178\cosmic swarm\include\_texturemanager.h
+	<_textureLoader.h>
+	<map>
+	<string>
+	<memory>
+

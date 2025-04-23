@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Cosmic Swarm" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Cosmic Swarm" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:/Users/Lance Heinrich/Desktop/CSCI 178/common/bin" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="include" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Cosmic Swarm" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:/Users/Lance Heinrich/Desktop/CSCI 178/common/bin" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../common/include" />
+		</Compiler>
+		<Linker>
+			<Add library="../common/lib/libSOIL.a" />
+			<Add library="../common/lib/glew32.lib" />
+			<Add library="glut32" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="winmm" />
+			<Add library="gdi32" />
+			<Add library="../common/lib/libirrKlang.a" />
+			<Add directory="../common/lib" />
+		</Linker>
+		<Unit filename="images/Greenlasercannon.png" />
+		<Unit filename="images/background.png" />
+		<Unit filename="images/bugfighter.png" />
+		<Unit filename="images/flak.png" />
+		<Unit filename="images/healthDrop.png" />
+		<Unit filename="images/laser.png" />
+		<Unit filename="images/magnet.png" />
+		<Unit filename="images/particle.png" />
+		<Unit filename="images/rocket.png" />
+		<Unit filename="images/rocketParticle.png" />
+		<Unit filename="images/smallbug.png" />
+		<Unit filename="images/spritesheet.png" />
+		<Unit filename="images/swarmbot.png" />
+		<Unit filename="images/xpOrb.png" />
+		<Unit filename="include/SpatialHashGrid.h" />
+		<Unit filename="include/_Bullet.h" />
+		<Unit filename="include/_collision.h" />
+		<Unit filename="include/_common.h" />
+		<Unit filename="include/_enemy.h" />
+		<Unit filename="include/_enemyDrops.h" />
+		<Unit filename="include/_inputs.h" />
+		<Unit filename="include/_lightSetting.h" />
+		<Unit filename="include/_model.h" />
+		<Unit filename="include/_parallax.h" />
+		<Unit filename="include/_particle.h" />
+		<Unit filename="include/_particleSystem.h" />
+		<Unit filename="include/_player.h" />
+		<Unit filename="include/_scene.h" />
+		<Unit filename="include/_sounds.h" />
+		<Unit filename="include/_textureLoader.h" />
+		<Unit filename="include/_textureManager.h" />
+		<Unit filename="include/_timer.h" />
+		<Unit filename="include/_weapon.h" />
+		<Unit filename="include/_xporb.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="sounds/blast.mp3" />
+		<Unit filename="sounds/engineSound.mp3" />
+		<Unit filename="sounds/music.mp3" />
+		<Unit filename="sounds/stepdirt_1.wav" />
+		<Unit filename="src/_Bullet.cpp" />
+		<Unit filename="src/_collision.cpp" />
+		<Unit filename="src/_common.cpp" />
+		<Unit filename="src/_enemy.cpp" />
+		<Unit filename="src/_enemyDrops.cpp" />
+		<Unit filename="src/_inputs.cpp" />
+		<Unit filename="src/_lightSetting.cpp" />
+		<Unit filename="src/_model.cpp" />
+		<Unit filename="src/_parallax.cpp" />
+		<Unit filename="src/_particleSystem.cpp" />
+		<Unit filename="src/_player.cpp" />
+		<Unit filename="src/_scene.cpp" />
+		<Unit filename="src/_sounds.cpp" />
+		<Unit filename="src/_textureLoader.cpp" />
+		<Unit filename="src/_timer.cpp" />
+		<Unit filename="src/_xporb.cpp" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
