@@ -46,17 +46,9 @@ void _enemy::drawEnemy(GLuint tex, float deltaTime) {
                 enemyTextureLoader->textureBinder();
             }
             glTranslatef(position.x, position.y, position.z);
-            if (isBoss)
-            {
-                glRotatef(0, 1, 0, 0);
-                glRotatef(0, 0, 1, 0);
-                glRotatef(0, 0, 0, 1);
-            } else
-            {
-                glRotatef(rotation.x, 1, 0, 0);
-                glRotatef(rotation.y, 0, 1, 0);
-                glRotatef(rotation.z, 0, 0, 1);
-            }
+            glRotatef(rotation.x, 1, 0, 0);
+            glRotatef(rotation.y, 0, 1, 0);
+            glRotatef(rotation.z, 0, 0, 1);
             glScalef(scale.x, scale.y, 1.0);
 
             glBegin(GL_QUADS);
@@ -140,12 +132,6 @@ void _enemy::enemyActions(float deltaTime)
     // Compute direction vector from enemy to player
     float deltaX = playerPosition.x - position.x;
     float deltaY = playerPosition.y - position.y;
-
-    // Compute the angle in degrees
-    float angle = atan2(deltaY, deltaX) * (180.0f / M_PI);
-
-    // Adjust to match enemy's default forward direction (downward)
-    rotation.z = angle - 90.0f;
 
     // Compute the distance to the player
     float magnitude = sqrt(deltaX * deltaX + deltaY * deltaY);

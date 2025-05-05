@@ -40,9 +40,7 @@ void _player::initPlayer(int xFrames, int yFrames, char* fileName)
 
     playerLevel = 1;
     experiencePoints = 0;
-    int baseXP = 5;
-    float growth = 1.5f;
-    xpThresh = baseXP + static_cast<int>(growth * playerLevel * playerLevel); // Set to 7
+    xpThresh = calculateXPThreshold(playerLevel);
 
     actionTrigger = IDLE;
 
@@ -512,23 +510,25 @@ vector<vec3> _player::getRotatedCorners() const
     return corners;
 }
 
-bool _player::gainXP(int amount)
-{
-experiencePoints += amount;
+bool _player::gainXP(int amount) {
+    experiencePoints += amount;
     bool leveledUp = false;
 
-    int baseXP = 5;
-    float growth = 1.5f;
-    int requiredXP = baseXP + static_cast<int>(growth * playerLevel * playerLevel);
-
-    if (experiencePoints >= requiredXP) {
-        experiencePoints -= requiredXP;
+    while (experiencePoints >= xpThresh) {
+        experiencePoints -= xpThresh;
         playerLevel++;
-        xpThresh = baseXP + static_cast<int>(growth * playerLevel * playerLevel); // Updates xpThresh
+        xpThresh = calculateXPThreshold(playerLevel);
         leveledUp = true;
     }
     return leveledUp;
 }
+
+int _player::calculateXPThreshold(int level) {
+    const int baseXP = 5;      // XP needed for the first level
+    const int xpPerLevel = 10; // Additional XP per level (adjustable)
+    return baseXP + (level - 1) * xpPerLevel;
+}
+
 _enemy* _player::findMostClusteredEnemy(vector<_enemy>& enemies, float clusterRadius)
 {
     _enemy* bestTarget = nullptr;

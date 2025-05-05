@@ -65,6 +65,9 @@ GLint _scene::initGL() {
     float minDistance = screenWidthUnits * 1.2f;
     float maxDistance = screenWidthUnits * 1.5f;
 
+    bossEnemy.initEnemy(BOSSSHIP, 1000.0f, {2.0f, 2.0f, 1.0f}, 1.0f);
+    bossEnemy.isAlive = false;
+
     initMenus();
     startGame();
 
@@ -102,12 +105,10 @@ void _scene::initMenus() {
 void _scene::startGame() {
     player->playerPosition = {0.0f, 0.0f, 50.0f};
     player->currentHp = player->maxHp = 100.0f;
-    player->experiencePoints = 0;
+
     player->playerLevel = 1;
-    // Set xpThresh using the same formula as gainXP
-    int baseXP = 5;
-    float growth = 1.5f;
-    player->xpThresh = baseXP + static_cast<int>(growth * player->playerLevel * player->playerLevel); // Sets xpThresh to 7
+    player->experiencePoints = 0;
+    player->xpThresh = player->calculateXPThreshold(player->playerLevel);
 
     // Reset upgrade multipliers
     player->damageMultiplier = 1.0f;
@@ -352,7 +353,8 @@ void _scene::drawScene(){
                             std::find(bullet.hitEnemies.begin(), bullet.hitEnemies.end(), enemyIndex) ==
                                 bullet.hitEnemies.end()) {
                             if (collision->isOBBCollision(bullet, *enemy)) {
-                                if (bullet.weapon.type != ROCKET) {
+                                if (bullet.weapon.type != ROCKET)
+                                {
                                     enemy->takeDamage(bullet.weapon.damage, xpOrbs, xpOrbTexture,
                                                       enemyDrops, enemyDropsMagnetTexture, enemyDropsHealthTexture);
                                 }
@@ -1273,17 +1275,15 @@ void _scene::processKeyboardInput() {
 void _scene::updateEnemySpawning() {
     if (currentState != PLAYING || bossSpawned) return;
 
-    // Time-based spawning parameters
-    float timeFactor = elapsedTime / 600.0f; // Normalize over 10 minutes
-    spawnInterval = 2.0f * exp(-3.0f * timeFactor) + 0.05f; // Adjusted for smoother curve
-    spawnInterval = std::max(0.05f, spawnInterval); // Minimum spawn interval
+    float timeFactor = elapsedTime / 300.0f; // Changed from 600.0f to 300.0f
+    spawnInterval = 2.0f * exp(-3.0f * timeFactor) + 0.05f;
+    spawnInterval = std::max(0.05f, spawnInterval);
 
-    int maxEnemies = 50 + static_cast<int>(timeFactor * 450); // Ramp from 50 to 500
+    int maxEnemies = 50 + static_cast<int>(timeFactor * 450);
     maxEnemies = std::min(maxEnemies, 500);
 
-    // Regular enemy spawning
     if (elapsedTime - lastSpawnTime >= spawnInterval && enemies.size() < static_cast<size_t>(maxEnemies)) {
-        int batchSize = 5 + static_cast<int>(timeFactor * 25); // 5 to 30 enemies per batch
+        int batchSize = 5 + static_cast<int>(timeFactor * 25);
         batchSize = std::min(batchSize, 30);
 
         for (int i = 0; i < batchSize; i++) {
@@ -1294,10 +1294,9 @@ void _scene::updateEnemySpawning() {
             randPos.y = player->playerPosition.y + sin(angle) * distance;
             randPos.z = 48.0f;
 
-            // Determine enemy type based on time
             float spawnChance = (rand() % 100) / 100.0f;
-            bool spawnBasic = (elapsedTime < 120.0f) || (elapsedTime < 300.0f && spawnChance < 0.6f) || (elapsedTime >= 300.0f && spawnChance < 0.4f);
-            bool spawnBugShip = elapsedTime >= 300.0f && spawnChance >= 0.4f && spawnChance < 0.8f;
+            bool spawnBasic = (elapsedTime < 60.0f) || (elapsedTime < 150.0f && spawnChance < 0.6f) || (elapsedTime >= 150.0f && spawnChance < 0.4f); // Adjusted times
+            bool spawnBugShip = elapsedTime >= 150.0f && spawnChance >= 0.4f && spawnChance < 0.8f; // Adjusted from 300.0f to 150.0f
 
             bool reused = false;
             for (auto& enemy : enemies) {
@@ -1305,11 +1304,11 @@ void _scene::updateEnemySpawning() {
                     enemy.placeEnemy(randPos);
                     enemy.isAlive = true;
                     if (spawnBasic) {
-                        enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.6f, 0.6f, 1.0f}, 2.0f);
+                        enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
                     } else if (spawnBugShip) {
                         enemy.initEnemy(BUGSHIP, 25.0f * getEnemyHPScalingFactor(), {0.8f, 0.8f, 1.0f}, 1.5f);
                     } else {
-                        enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.6f, 0.6f, 1.0f}, 2.0f);
+                        enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
                     }
                     enemy.scale = {1.0f, 1.0f};
                     enemy.playerPosition = player->playerPosition;
@@ -1323,11 +1322,11 @@ void _scene::updateEnemySpawning() {
                 newEnemy.placeEnemy(randPos);
                 newEnemy.isAlive = true;
                 if (spawnBasic) {
-                    newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.6f, 0.6f, 1.0f}, 2.0f);
+                    newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
                 } else if (spawnBugShip) {
                     newEnemy.initEnemy(BUGSHIP, 25.0f * getEnemyHPScalingFactor(), {0.8f, 0.8f, 1.0f}, 1.5f);
                 } else {
-                    newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.6f, 0.6f, 1.0f}, 2.0f);
+                    newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
                 }
                 newEnemy.scale = {1.0f, 1.0f};
                 newEnemy.playerPosition = player->playerPosition;
@@ -1337,22 +1336,19 @@ void _scene::updateEnemySpawning() {
         lastSpawnTime = elapsedTime;
     }
 
-    // Swarm spawning (after 2 minutes)
-    if (elapsedTime >= 120.0f && elapsedTime - lastBugSpawnTime >= bugSpawnInterval) {
+    if (elapsedTime >= 60.0f && elapsedTime - lastBugSpawnTime >= bugSpawnInterval) { // Changed from 120.0f to 60.0f
         spawnBugSwarm();
         lastBugSpawnTime = elapsedTime;
-        bugSpawnInterval = 15.0f * exp(-2.0f * timeFactor) + 5.0f; // Swarms more frequent over time
+        bugSpawnInterval = 15.0f * exp(-2.0f * timeFactor) + 5.0f;
     }
 
-    // Boss spawning at 10:00
-    if (elapsedTime >= 600.0f && !bossSpawned) {
+    if (elapsedTime >= 300.0f && !bossSpawned) { // Changed from 600.0f to 300.0f
         vec3 bossPos = player->playerPosition;
-        bossPos.x += 10.0f; // Spawn ahead of player
+        bossPos.x += 10.0f;
         bossPos.z = 48.0f;
         bossEnemy.placeEnemy(bossPos);
         bossEnemy.isAlive = true;
-        bossEnemy.initEnemy(BOSSSHIP, 20000.0f, {2.5f, 2.5f, 1.0f}, 3.0f);
-        bossEnemy.scale = {3.0f, 3.0f}; // Larger appearance
+        bossEnemy.scale = {3.0f, 3.0f};
         bossEnemy.playerPosition = player->playerPosition;
         bossEnemy.currentHp = bossEnemy.maxHp;
         bossSpawned = true;
@@ -1362,7 +1358,7 @@ void _scene::updateEnemySpawning() {
 }
 
 void _scene::spawnBugSwarm() {
-    int maxEnemies = 50 + static_cast<int>(elapsedTime / 600.0f * 450);
+    int maxEnemies = 50 + static_cast<int>(elapsedTime / 300.0f * 450); // Changed from 600.0f to 300.0f
     maxEnemies = std::min(maxEnemies, 500);
 
     if (enemies.size() >= static_cast<size_t>(maxEnemies)) return;
@@ -1374,7 +1370,7 @@ void _scene::spawnBugSwarm() {
     centerPos.y = player->playerPosition.y + sin(angle) * distance;
     centerPos.z = 48.0f;
 
-    int batchSize = 20 + static_cast<int>(elapsedTime / 600.0f * 80); // 20 to 100 bugs
+    int batchSize = 20 + static_cast<int>(elapsedTime / 300.0f * 80); // Changed from 600.0f to 300.0f
     batchSize = std::min(batchSize, 100);
     float swarmRadius = 3.0f;
 
@@ -1514,11 +1510,11 @@ void _scene::updateMagnet(float deltaTime){
 }
 
 float _scene::getEnemyHPScalingFactor() const {
-float timeFactor = elapsedTime / 600.0f;
-    if (elapsedTime < 120.0f) { // No HP scaling for first 2 minutes
+    float timeFactor = elapsedTime / 300.0f; // Changed from 600.0f to 300.0f
+    if (elapsedTime < 60.0f) { // Changed from 120.0f to 60.0f
         return 1.0f;
     } else {
-        float adjustedTimeFactor = (elapsedTime - 120.0f) / 480.0f; // Scale over remaining 8 minutes
-        return 1.0f + 4.0f * adjustedTimeFactor; // Still reach 5x HP by 10 minutes
+        float adjustedTimeFactor = (elapsedTime - 60.0f) / 240.0f; // Adjusted from 120.0f/480.0f to 60.0f/240.0f
+        return 1.0f + 4.0f * adjustedTimeFactor;
     }
 }

@@ -73,7 +73,7 @@ class _player
         float healthMultiplier = 1.0f;  // Multiplies maxHp
         float fireRateMultiplier = 1.0f; // Multiplies (reduces) fireRate
         float aoeSizeMultiplier = 1.0f; // Multiplies aoeSize
-
+        int calculateXPThreshold(int level);
         // Upgrade method
         void applyUpgrade(const string& upgradeType);
         void applyWeaponUpgrade(WeaponType type); // New method for weapon upgrades

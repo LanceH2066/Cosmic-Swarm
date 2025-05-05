@@ -49,7 +49,7 @@ void _Bullet::init(vec3 spawnPos, vec3 playerRotation, vec3 targetPos, shared_pt
         float angleRad = (playerRotation.z + 90) * (M_PI / 180.0);
         direction.x = cos(angleRad);
         direction.y = sin(angleRad);
-        collisionBoxSize = {weapon.aoeSize*0.5, 0.5*weapon.aoeSize, 1.0f}; // Circular hitbox
+        collisionBoxSize = {weapon.aoeSize*0.25, 0.25*weapon.aoeSize, 1.0f}; // Circular hitbox
     }
     scale = {1, 1, 1};
     rotation = playerRotation;
