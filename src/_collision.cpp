@@ -36,9 +36,11 @@ bool _collision::isOBBCollision(const _Bullet& bullet, const _enemy& enemy)
     for (auto& axis : axes)
     {
         float mag = sqrt(axis.x * axis.x + axis.y * axis.y);
-        if (mag > 0) {
+        if (mag > 1e-6f) { // Avoid division by zero or very small values
             axis.x /= mag;
             axis.y /= mag;
+        } else {
+            axis = {1.0f, 0.0f, 0.0f}; // Fallback to a default axis
         }
     }
 

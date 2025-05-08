@@ -1377,11 +1377,11 @@ void _scene::updateEnemySpawning()
                         enemy.placeEnemy(randPos);
                         enemy.isAlive = true;
                         if (spawnBasic) {
-                            enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
+                            enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.4f, 0.4f, 1.0f}, 2.0f);
                         } else if (spawnBugShip) {
                             enemy.initEnemy(BUGSHIP, 25.0f * getEnemyHPScalingFactor(), {0.8f, 0.8f, 1.0f}, 1.5f);
                         } else {
-                            enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
+                            enemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.4f, 0.4f, 1.0f}, 2.0f);
                         }
                         enemy.scale = {1.0f, 1.0f};
                         enemy.playerPosition = player->playerPosition;
@@ -1395,11 +1395,11 @@ void _scene::updateEnemySpawning()
                     newEnemy.placeEnemy(randPos);
                     newEnemy.isAlive = true;
                     if (spawnBasic) {
-                        newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
+                        newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.4f, 0.4f, 1.0f}, 2.0f);
                     } else if (spawnBugShip) {
                         newEnemy.initEnemy(BUGSHIP, 25.0f * getEnemyHPScalingFactor(), {0.8f, 0.8f, 1.0f}, 1.5f);
                     } else {
-                        newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.25f, 0.25f, 1.0f}, 2.0f);
+                        newEnemy.initEnemy(SWARMBOT, 15.0f * getEnemyHPScalingFactor(), {0.4f, 0.4f, 1.0f}, 2.0f);
                     }
                     newEnemy.scale = {1.0f, 1.0f};
                     newEnemy.playerPosition = player->playerPosition;
