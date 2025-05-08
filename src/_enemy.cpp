@@ -73,8 +73,10 @@ void _enemy::placeEnemy(vec3 pos)
     hasExploded = false;
 }
 
-void _enemy::takeDamage(float damage, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture)
+void _enemy::takeDamage(float damage, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture,_sounds *sounds)
 {
+    if (sounds) sounds->playEnemyDamage();
+
     currentHp -= damage;
     if (currentHp <= 0 && isAlive)
     {
@@ -83,6 +85,7 @@ void _enemy::takeDamage(float damage, vector<_xpOrb>& xpOrbs, std::shared_ptr<_t
         {
             explosionEffect->spawnExplosion(position, 15, 0);
             hasExploded = true;
+            if (sounds) sounds->playEnemyDeath();
         }
 
         _xpOrb orb;
@@ -91,18 +94,41 @@ void _enemy::takeDamage(float damage, vector<_xpOrb>& xpOrbs, std::shared_ptr<_t
         orb.initOrb();
         xpOrbs.push_back(orb);
 
-        if (rand() % 150 == 0)
+        // Dynamic drop rate based on gameTime
+        const int m_start = 10;        // 1/50 = 2% chance at start
+        const int m_end = 300;         // 1/200 = 0.5% chance at end
+        const float time_to_reach_end = 300.0f;  // 10 minutes
+
+        int m = m_start + static_cast<int>((gameTime / time_to_reach_end) * (m_end - m_start));
+        m = std::min(m, m_end);  // Cap at m_end
+
+        if (rand() % m == 0)
         {
+
             _enemyDrops drop;
-            _enemyDrops::dropType type = (rand() % 2 == 0) ? _enemyDrops::MAGNET : _enemyDrops::HEALTH;
+            int dropRand = rand() % 3;
+            _enemyDrops::dropType type;
+            if (dropRand == 0) type = _enemyDrops::MAGNET;
+            else if (dropRand == 1) type = _enemyDrops::HEALTH;
+            else type = _enemyDrops::SHIELD;
+
             drop.initDrop(type);
-            drop.dropTextureLoader = (type == _enemyDrops::MAGNET) ? enemyDropsMagnetTexture : enemyDropsHealthTexture;
+            if (type == _enemyDrops::MAGNET)
+            drop.dropTextureLoader = enemyDropsMagnetTexture;
+            else if (type == _enemyDrops::HEALTH)
+            drop.dropTextureLoader = enemyDropsHealthTexture;
+            else
+            drop.dropTextureLoader = _textureManager::getInstance().getTexture("shield");
+
             drop.placeDrop(position);
             enemyDrops.push_back(drop);
+
+
         }
     }
     startFlash = true;
     flashTimer = 0.0f;  // Reset flash timer
+
 }
 
 void _enemy::enemyActions(float deltaTime)

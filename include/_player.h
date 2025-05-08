@@ -3,7 +3,6 @@
 
 #include<_common.h>
 #include<_Bullet.h>
-#include <_sounds.h>
 #include<_textureManager.h>
 
 class _player
@@ -46,8 +45,7 @@ class _player
 
         // Add health and damage mechanics
         float maxHp, currentHp;
-        void takeDamage(float damage);
-
+        void takeDamage(float damage, _sounds *sounds);
         // Add collision box for OBB collision
         vec3 collisionBoxSize = {0.35f, 0.35f, 1.0f};  // Half-extents of the collision box (adjust as needed)
         vec3 getCollisionBoxMin() const { return {playerPosition.x - collisionBoxSize.x, playerPosition.y - collisionBoxSize.y, playerPosition.z - collisionBoxSize.z}; }
@@ -79,6 +77,11 @@ class _player
         void applyWeaponUpgrade(WeaponType type); // New method for weapon upgrades
 
         AABB getAABB() const;
+
+        //shields
+        bool hasShield = false;
+        float shieldTimer = 0.0f;
+        std::shared_ptr<_textureLoader> shieldTex;
 
     protected:
 

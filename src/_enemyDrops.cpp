@@ -48,7 +48,7 @@ void _enemyDrops::placeDrop(vec3 pos)
     timeAlive = 0.0f;
 }
 
-void _enemyDrops::update(float deltaTime, vec3 playerPos, float& xpPickupRange, bool& magnetActive, float& magnetTimer, float& playerCurrentHp, float playerMaxHp)
+void _enemyDrops::update(float deltaTime, vec3 playerPos, float& xpPickupRange, bool& magnetActive, float& magnetTimer, float& playerCurrentHp, float playerMaxHp, bool& playerHasShield, float& shieldTimer)
 {
     if (!isActive) return;
 
@@ -84,7 +84,8 @@ void _enemyDrops::update(float deltaTime, vec3 playerPos, float& xpPickupRange, 
                 break;
 
             case SHIELD:
-                // Will add shield later
+                playerHasShield = true;
+                shieldTimer = std::max(shieldTimer, 5.0f); // 5-second shield
                 break;
         }
     }

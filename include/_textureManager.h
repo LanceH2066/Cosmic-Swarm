@@ -37,6 +37,7 @@ public:
         loadTexture("bossShip", "images/bossShip.png");
         loadTexture("particle", "images/particle.png");
         loadTexture("rocketParticle", "images/rocketParticle.png");
+        loadTexture("shield", "images/shield.png");
     }
 
     std::shared_ptr<_textureLoader> getTexture(const std::string& key) {

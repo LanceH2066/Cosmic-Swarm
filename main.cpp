@@ -5,7 +5,7 @@
 
 #include "_scene.h"  // Scene Class (Has all other libraries)
 using namespace std;
-
+float gameTime = 0.0f;
 
 HDC			hDC=NULL;		// Private GDI Device Context
 HGLRC		hRC=NULL;		// Permanent Rendering Context

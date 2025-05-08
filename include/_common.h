@@ -23,6 +23,9 @@ using namespace std;
 enum WeaponType { DEFAULT, ROCKET, LASER, FLAK, ENERGY_FIELD };
 enum EnemyType { SWARMBOT, BUGSHIP, SMALLBUG, BOSSSHIP };
 
+extern float gameTime;
+
+
 struct AABB {
     float minX, minY, maxX, maxY;
 };

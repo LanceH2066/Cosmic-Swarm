@@ -55,8 +55,9 @@ void _particleSystem::update(float deltaTime)
             it->color.w = alpha;
 
             // Slow down over time
-            it->velocity.x *= 0.99f;
-            it->velocity.y *= 0.99f;
+            float decay = pow(0.99f, deltaTime);
+            it->velocity.x *= decay;
+            it->velocity.y *= decay;
 
             ++it;
         }

@@ -30,7 +30,7 @@ class _enemyDrops
         void initDrop(dropType t);
         void drawDrop();
         void placeDrop(vec3 pos);
-        void update(float deltaTime, vec3 playerPos, float& xpPickupRange, bool& magnetActive, float& magnetTimer, float& playerCurrentHp, float playerMaxHp);
+        void update(float deltaTime, vec3 playerPos, float& xpPickupRange, bool& magnetActive, float& magnetTimer, float& playerCurrentHp, float playerMaxHp, bool& playerHasShield, float& shieldTimer);
         vec3 getCollisionBoxMin() const;
         vec3 getCollisionBoxMax() const;
 

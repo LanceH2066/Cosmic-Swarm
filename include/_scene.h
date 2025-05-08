@@ -22,6 +22,7 @@ class _scene
 
         _inputs *input;
         _parallax *prlx1;
+        _parallax *mainmenu;
         _player *player;
         _collision *collision;
         _sounds *sounds;
@@ -36,6 +37,7 @@ class _scene
         std::shared_ptr<_textureLoader> aoeSizeIconTexture;
         std::shared_ptr<_textureLoader> speedIconTexture;
         std::shared_ptr<_textureLoader> healthIconTexture;
+        std::shared_ptr<_textureLoader> enemyDropsShieldTexture;
 
 
         GLint initGL();                         // Initialize Game Objects
@@ -120,7 +122,8 @@ class _scene
     GameState currentState = MAIN_MENU;
     GameState previousState;
     bool isVictory = false;
-
+    bool clearScreenDone = false;
+    void clearScreen();
     struct Button {
         float x, y, width, height;
         string label;

@@ -5,6 +5,7 @@
 #include<_textureManager.h>
 #include <_particleSystem.h>
 #include <_xporb.h>
+#include <_sounds.h>
 
 class _enemyDrops;
 
@@ -33,7 +34,7 @@ class _enemy
         void drawEnemy(GLuint, float);
         void placeEnemy(vec3);
         void enemyActions(float deltaTime);
-        void takeDamage(float damage, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture);
+        void takeDamage(float damage, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture,_sounds *sounds);
 
         float maxHp, currentHp;
         float stoppingDistance = 0.35f;
@@ -49,6 +50,7 @@ class _enemy
         bool hasExploded;
         bool isBoss;
         AABB getAABB() const;
+
     protected:
     private:
 };

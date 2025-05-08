@@ -18,6 +18,7 @@ class _parallax
         void initParallax(char*,float,bool,bool);           // File Name
         void scroll(string);     // Auto move, direction, speed
         void autoScroll();
+        void drawMainMenu(float screenWidth, float screenHeight); // New method for main menu background
 
         float xMax, xMin, yMax, yMin;       // Texture coordinates
         float speed;

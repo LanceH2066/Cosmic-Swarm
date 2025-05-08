@@ -17,20 +17,28 @@ public:
 
     void playMusic();
     void stopMusic();
-    void playThrusterSound();
-    void stopThrusterSound();
-    void playShootSound();
+    void play(ISoundSource* source);
+    void playEnemyDamage();
+    void playEnemyDeath();
+    int activeEnemyDamageSounds = 0;
+    int activeEnemyDeathSounds = 0;
+    const int maxEnemyDamageSounds = 4;  // adjust as needed
+    const int maxEnemyDeathSounds = 3;
 
-private:
-    ISound* currentMusic = nullptr;   // Background music
-    ISound* thrusterSound = nullptr;  // Looping thruster sound
-
-    ISoundSource* thrusterSoundSource = nullptr;
-    ISoundSource* shootSoundSource = nullptr;
+    ISound* currentMusic = nullptr;
     ISoundSource* musicSource = nullptr;
-
+    ISoundSource* damagePlayerSource;
+    ISoundSource* damageEnemySource;
+    ISoundSource* rocketFireSource;
+    ISoundSource* enemyDeathSource;
+    ISoundSource* rocketExplosionSource;
+    ISoundSource* laserCannonSource;
+    ISoundSource* flakSource;
     vector<ISound*> activeSounds;  // Store currently playing sounds
     void cleanupSounds();  // Remove finished sounds
+private:
+
+
 };
 
 #endif // _SOUNDS_H

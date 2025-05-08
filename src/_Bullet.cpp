@@ -33,7 +33,7 @@ void _Bullet::init(vec3 spawnPos, vec3 playerRotation, vec3 targetPos, shared_pt
     {
         // Energy field follows player, no direction
         direction = {0, 0, 0};
-        collisionBoxSize = {weapon.aoeSize, weapon.aoeSize, 1.0f}; // Circular hitbox
+        collisionBoxSize = {weapon.aoeSize, weapon.aoeSize, 1.0f};
         isAlive = true;
     }
     else if(weapon.type == DEFAULT)
@@ -41,15 +41,21 @@ void _Bullet::init(vec3 spawnPos, vec3 playerRotation, vec3 targetPos, shared_pt
         float angleRad = (playerRotation.z + 90) * (M_PI / 180.0);
         direction.x = cos(angleRad);
         direction.y = sin(angleRad);
-        collisionBoxSize = {baseCollisionBoxSize.x * weapon.aoeSize, baseCollisionBoxSize.y * weapon.aoeSize, 1.0f}; // Circular hitbox
+        collisionBoxSize = {baseCollisionBoxSize.x * weapon.aoeSize, baseCollisionBoxSize.y * weapon.aoeSize, 1.0f};
     }
-    else
+    else if(weapon.type == ROCKET)
     {
-        // Default, Rocket, Flak: Calculate direction
         float angleRad = (playerRotation.z + 90) * (M_PI / 180.0);
         direction.x = cos(angleRad);
         direction.y = sin(angleRad);
-        collisionBoxSize = {weapon.aoeSize*0.25, 0.25*weapon.aoeSize, 1.0f}; // Circular hitbox
+        collisionBoxSize = {weapon.aoeSize*0.25, 0.25*weapon.aoeSize, 1.0f};
+    }
+    else
+    {
+        float angleRad = (playerRotation.z + 90) * (M_PI / 180.0);
+        direction.x = cos(angleRad);
+        direction.y = sin(angleRad);
+        collisionBoxSize = {weapon.aoeSize*0.6, 0.6*weapon.aoeSize, 1.0f};
     }
     scale = {1, 1, 1};
     rotation = playerRotation;
@@ -108,16 +114,23 @@ void _Bullet::update(float deltaTime, vector<_enemy>& enemies)
     */
 }
 
-void _Bullet::explode(vector<_enemy>& enemies, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture)
+void _Bullet::explode(vector<_enemy>& enemies, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture,_sounds *sounds)
 {
     hasExploded = true;
-    explosionTimer = 0.0f; // Reset timer
-    explosionEffect->spawnExplosion(position, weapon.level*50, weapon.level*2);
+    explosionTimer = 0.0f;
+
+    // Use aoeSize to drive visual effect and gameplay
+    int particleCount = static_cast<int>(weapon.aoeSize * 100); // adjust if too many/few
+    float particleSpeed = weapon.aoeSize*1.25;
+    explosionEffect->spawnExplosion(position, particleCount, particleSpeed);
+    sounds->play(sounds->rocketExplosionSource);
+
+    // Damage enemies within radius defined by aoeSize
     for (auto& enemy : enemies) {
         float dx = enemy.position.x - position.x;
         float dy = enemy.position.y - position.y;
-        if (sqrt(dx * dx + dy * dy) <= 2.0 + (1.5*weapon.level)) {
-            enemy.takeDamage(weapon.damage, xpOrbs, xpOrbTexture, enemyDrops, enemyDropsMagnetTexture, enemyDropsHealthTexture);
+        if (sqrt(dx * dx + dy * dy) <= weapon.aoeSize*3.0f) {
+            enemy.takeDamage(weapon.damage, xpOrbs, xpOrbTexture, enemyDrops, enemyDropsMagnetTexture, enemyDropsHealthTexture, sounds);
         }
     }
 }

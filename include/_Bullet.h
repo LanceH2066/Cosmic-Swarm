@@ -31,13 +31,13 @@ class _Bullet
     void drawBullet(float deltaTime);
     vec3 getCollisionBoxMin() const;
     vec3 getCollisionBoxMax() const;
-    void explode(vector<_enemy>& enemies, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture);
+    void explode(vector<_enemy>& enemies, vector<_xpOrb>& xpOrbs, std::shared_ptr<_textureLoader> xpOrbTexture, vector<_enemyDrops>& enemyDrops, std::shared_ptr<_textureLoader> enemyDropsMagnetTexture, std::shared_ptr<_textureLoader> enemyDropsHealthTexture,_sounds *sounds);
     static const float laserHitboxLengths[5];
     vector<vec3> getRotatedCorners() const;
     vector<int> hitEnemies;
     AABB getAABB() const;  // Moved from protected to public
     float explosionTimer = 0.0f;
-float maxExplosionDuration = 1.0f; // Duration to keep explosion effect (adjust as needed)
+float maxExplosionDuration = 3.0f; // Duration to keep explosion effect (adjust as needed)
     protected:
 
     private:

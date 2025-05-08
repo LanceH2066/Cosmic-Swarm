@@ -50,6 +50,7 @@ void _player::initPlayer(int xFrames, int yFrames, char* fileName)
     rocketTex = _textureManager::getInstance().getTexture("rocket");
     laserTex = _textureManager::getInstance().getTexture("laser");
     flakTex = _textureManager::getInstance().getTexture("flak");
+    shieldTex = _textureManager::getInstance().getTexture("shield");
 
     // Check for null textures
     if (!playerTextureLoader) std::cerr << "Player texture not found!" << std::endl;
@@ -96,6 +97,22 @@ void _player::drawPlayer()
         glTexCoord2f(xMin,yMin);
         glVertex3f(vertices[3].x,vertices[3].y,vertices[3].z);
         glEnd();
+
+        if (hasShield && shieldTex)
+        {
+            glPushMatrix();
+            glTranslatef(0.0f, 0.0f, 0.01f); // Offset slightly in front
+            glScalef(1.5f, 1.5f, 1.0f); // Bigger than player
+            shieldTex->textureBinder();
+            glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+            glBegin(GL_QUADS);
+                glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, -1.0f, 0.0f);
+                glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, -1.0f, 0.0f);
+                glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f, 0.0f);
+                glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f, 0.0f);
+            glEnd();
+            glPopMatrix();
+        }
 
     glPopMatrix();
 }
@@ -184,6 +201,7 @@ void _player::updateWeapons(float deltaTime, vector<_enemy>& enemies, vec3 mouse
                     bullet.init(playerPosition, {0, 0, angle}, targetPos, weapon.texture, weapon);
                     bullet.isAlive = true;
                     bullets.push_back(bullet);
+                    if (sounds) sounds->play(sounds->rocketFireSource);
                 }
                 else if (weapon.type == FLAK)
                 {
@@ -203,6 +221,8 @@ void _player::updateWeapons(float deltaTime, vector<_enemy>& enemies, vec3 mouse
                         bullet.isAlive = true;
                         bullets.push_back(bullet);
                     }
+                    if (sounds) sounds->play(sounds->flakSource);
+
                 }
                 else if (weapon.type == ENERGY_FIELD)
                 {
@@ -280,7 +300,7 @@ void _player::shoot(vec3 mousePos, _sounds *sounds)
         bullets.push_back(rightBullet);
 
         defaultWeapon.timer.reset(); // Reset weapon timer
-        //sounds->playShootSound();
+        if (sounds) sounds->play(sounds->laserCannonSource);
     }
 }
 
@@ -357,7 +377,7 @@ void _player::applyWeaponUpgrade(WeaponType type) {
                 case ROCKET:
                 {
                     Weapon rocket;
-                    rocket.init(ROCKET, rocketTex, 10.0f, 3.0f, 1.0f, 10.0f);
+                    rocket.init(ROCKET, rocketTex, 15.0f, 3.5f, 1.0f, 7.0f);
                     rocket.isActive = true;
                     weapons.push_back(rocket);
                     break;
@@ -365,7 +385,7 @@ void _player::applyWeaponUpgrade(WeaponType type) {
                 case LASER:
                 {
                     Weapon laser;
-                    laser.init(LASER, laserTex, 10.0f, 0.1f, 1.0f, 0.0);
+                    laser.init(LASER, laserTex, 12.0f, 0.1f, 1.0f, 0.0);
                     laser.isActive = true;
                     weapons.push_back(laser);
                     break;
@@ -373,7 +393,7 @@ void _player::applyWeaponUpgrade(WeaponType type) {
                 case FLAK:
                 {
                     Weapon flak;
-                    flak.init(FLAK, flakTex, 3.0f, 1.2f, 0.25f, 12.0f);
+                    flak.init(FLAK, flakTex, 5.0f, 1.2f, 0.25f, 12.0f);
                     flak.isActive = true;
                     weapons.push_back(flak);
                     break;
@@ -397,6 +417,17 @@ void _player::applyWeaponUpgrade(WeaponType type) {
 void _player::playerActions(float deltaTime)
 {
     playerTimer->update(deltaTime);
+
+    if (hasShield)
+    {
+        shieldTimer -= deltaTime;
+        if (shieldTimer <= 0.0f)
+        {
+            hasShield = false;
+            shieldTimer = 0.0f;
+        }
+    }
+
     switch(actionTrigger)
     {
         case IDLE:
@@ -472,8 +503,14 @@ void _player::playerActions(float deltaTime)
     }
 }
 
-void _player::takeDamage(float damage)
+void _player::takeDamage(float damage, _sounds *sounds)
 {
+    if (hasShield) {
+            //cout << "blocked by shield" << endl;
+        return;
+    }
+
+
     currentHp -= damage;
     if (currentHp <= 0)
     {
@@ -482,6 +519,8 @@ void _player::takeDamage(float damage)
     }
     startFlash = true;
     flashTimer = 0.0f;  // Reset flash timer
+    if (sounds) sounds->play(sounds->damagePlayerSource);
+
 }
 
 vector<vec3> _player::getRotatedCorners() const

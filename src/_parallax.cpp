@@ -45,6 +45,16 @@ void _parallax::drawBackground(float width, float height, vec3 playerPos)
     glEnd();
 }
 
+void _parallax::drawMainMenu(float screenWidth, float screenHeight) {
+    background->textureBinder(); // Bind the texture
+    glBegin(GL_QUADS); // Draw a quad covering the screen
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 0.0f);          // Bottom-left: top of image
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(screenWidth, 0.0f);   // Bottom-right: top-right of image
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(screenWidth, screenHeight); // Top-right: bottom-right of image
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, screenHeight);  // Top-left: bottom-left of image
+    glEnd();
+}
+
 void _parallax::initParallax(char* fileName, float speed, bool upDown, bool leftRight)
 {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

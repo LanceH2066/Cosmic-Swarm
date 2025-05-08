@@ -10,20 +10,39 @@ _sounds::_sounds()
     }
 
     // Preload sound sources
-    thrusterSoundSource = soundEngine->addSoundSourceFromFile("sounds/engineSound.mp3");
-    shootSoundSource = soundEngine->addSoundSourceFromFile("sounds/blast.mp3");
-    musicSource = soundEngine->addSoundSourceFromFile("sounds/music.mp3");
+    musicSource            = soundEngine->addSoundSourceFromFile("sounds/music.wav");
+    damagePlayerSource     = soundEngine->addSoundSourceFromFile("sounds/damage1.wav");
+    damageEnemySource      = soundEngine->addSoundSourceFromFile("sounds/damage2.wav");
+    rocketFireSource       = soundEngine->addSoundSourceFromFile("sounds/rocketFire.wav");
+    enemyDeathSource       = soundEngine->addSoundSourceFromFile("sounds/explosion1.wav");
+    rocketExplosionSource  = soundEngine->addSoundSourceFromFile("sounds/explosion3.wav");
+    laserCannonSource      = soundEngine->addSoundSourceFromFile("sounds/laserCannon.wav");
+    flakSource             = soundEngine->addSoundSourceFromFile("sounds/flak.wav");
 
-    // Set sounds to be played from memory for performance
-    thrusterSoundSource->setDefaultVolume(0.1f);
-    shootSoundSource->setDefaultVolume(0.01f);
     musicSource->setDefaultVolume(0.05f);
+    damagePlayerSource->setDefaultVolume(0.05f);
+    damageEnemySource->setDefaultVolume(0.02f);
+    rocketFireSource->setDefaultVolume(0.1f);
+    enemyDeathSource->setDefaultVolume(0.05f);
+    rocketExplosionSource->setDefaultVolume(0.2f);
+    laserCannonSource->setDefaultVolume(0.03f);
+    flakSource->setDefaultVolume(0.02f);
+
 }
 
 _sounds::~_sounds()
 {
     stopMusic();
     soundEngine->drop();
+}
+
+void _sounds::play(ISoundSource* source)
+{
+    if (source)
+    {
+        ISound* s = soundEngine->play2D(source, false, false, true);
+        if (s) activeSounds.push_back(s);
+    }
 }
 
 void _sounds::playMusic()
@@ -46,33 +65,30 @@ void _sounds::stopMusic()
     }
 }
 
-void _sounds::playThrusterSound()
+void _sounds::playEnemyDamage()
 {
-    if (!thrusterSound || thrusterSound->isFinished())
+    if (activeEnemyDamageSounds < maxEnemyDamageSounds)
     {
-        thrusterSound = soundEngine->play2D(thrusterSoundSource, true, false, true);
+        ISound* s = soundEngine->play2D(damageEnemySource, false, false, true);
+        if (s)
+        {
+            activeSounds.push_back(s);
+            activeEnemyDamageSounds++;
+        }
     }
 }
 
-void _sounds::stopThrusterSound()
+void _sounds::playEnemyDeath()
 {
-    if (thrusterSound)
+    if (activeEnemyDeathSounds < maxEnemyDeathSounds)
     {
-        thrusterSound->stop();
-        thrusterSound->drop();
-        thrusterSound = nullptr;
+        ISound* s = soundEngine->play2D(enemyDeathSource, false, false, true);
+        if (s)
+        {
+            activeSounds.push_back(s);
+            activeEnemyDeathSounds++;
+        }
     }
-}
-
-void _sounds::playShootSound()
-{
-    ISound* newSound = soundEngine->play2D(shootSoundSource, false, false, true);
-    if (newSound)
-    {
-        newSound->setVolume(0.01f);
-        activeSounds.push_back(newSound);
-    }
-    cleanupSounds();
 }
 
 // Remove finished sounds from the active sounds list
@@ -80,11 +96,18 @@ void _sounds::cleanupSounds()
 {
     activeSounds.erase(
         std::remove_if(activeSounds.begin(), activeSounds.end(),
-            [](ISound* sound)
+            [this](ISound* sound)
             {
                 if (!sound || sound->isFinished())
                 {
-                    if (sound) sound->drop();
+                    if (sound)
+                    {
+                        // Decrement counters by comparing sources
+                        if (sound->getSoundSource() == damageEnemySource) activeEnemyDamageSounds--;
+                        else if (sound->getSoundSource() == enemyDeathSource) activeEnemyDeathSounds--;
+
+                        sound->drop();
+                    }
                     return true;
                 }
                 return false;
