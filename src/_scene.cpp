@@ -70,7 +70,7 @@ GLint _scene::initGL() {
     float minDistance = screenWidthUnits * 1.2f;
     float maxDistance = screenWidthUnits * 1.5f;
 
-    bossEnemy.initEnemy(BOSSSHIP, 50.0f, {2.0f, 2.0f, 1.0f}, 4.5f);
+    bossEnemy.initEnemy(BOSSSHIP, 15000.0f, {2.0f, 2.0f, 1.0f}, 4.5f);
     bossEnemy.isAlive = false;
 
     initMenus();
