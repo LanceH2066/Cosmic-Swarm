@@ -10,6 +10,9 @@ _particleSystem::~_particleSystem() {
 
 void _particleSystem::init(char* textureFile) {
     particleTexture->loadTexture(textureFile); // Load particle texture (e.g., a spark or glow)
+    if (particleTexture->tex == 0) {
+        std::cerr << "[ERROR] Failed to load particle texture: " << textureFile << std::endl;
+    }
 }
 
 void _particleSystem::spawnExplosion(vec3 position, int particleCount, float particleSpeed)

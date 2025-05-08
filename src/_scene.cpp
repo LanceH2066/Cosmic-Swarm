@@ -6,8 +6,8 @@ _scene::_scene(){
     mainmenu = new _parallax();
     player = new _player();
     collision = new _collision();
+    gameOverExplosion = new _particleSystem();
     sounds = new _sounds();
-    // No need to use new for shared_ptr; they can be assigned directly in initGL
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&lastTime);
     deltaTime = 0.0f;
@@ -20,14 +20,15 @@ _scene::~_scene(){
     delete player;
     delete collision;
     delete sounds;
+    delete gameOverExplosion;
     delete mainmenu;
-    // No need to70    // No need to delete shared_ptr members; they clean up automatically
     input = nullptr;
     prlx1 = nullptr;
     player = nullptr;
     collision = nullptr;
     sounds = nullptr;
     mainmenu = nullptr;
+    gameOverExplosion = nullptr;
 }
 
 GLint _scene::initGL() {
@@ -63,13 +64,13 @@ GLint _scene::initGL() {
     enemyDropsShieldTexture = _textureManager::getInstance().getTexture("shield");
 
     loadFontData("images/font.fnt");
-
+    gameOverExplosion->init("images/particle.png");
     float worldUnitsPerPixel = 10.0f / dim.x;
     float screenWidthUnits = dim.x * worldUnitsPerPixel;
     float minDistance = screenWidthUnits * 1.2f;
     float maxDistance = screenWidthUnits * 1.5f;
 
-    bossEnemy.initEnemy(BOSSSHIP, 15000.0f, {2.0f, 2.0f, 1.0f}, 4.5f);
+    bossEnemy.initEnemy(BOSSSHIP, 50.0f, {2.0f, 2.0f, 1.0f}, 4.5f);
     bossEnemy.isAlive = false;
 
     initMenus();
@@ -147,6 +148,7 @@ void _scene::startGame() {
     upgradeMenuActive = false;
     bossSpawned = false;
     bossDefeated = false;
+    hasPlayedEndingExplosion = false;
     activeUpgrades.clear();
 }
 
@@ -268,7 +270,7 @@ void _scene::drawScene(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    if (currentState == PLAYING || currentState == PAUSED || currentState == UPGRADE_MENU)
+    if (currentState == PLAYING || currentState == PAUSED || currentState == UPGRADE_MENU || currentState == ENDING_SEQUENCE || currentState == GAME_OVER)
     {
         updateMagnet(deltaTime);
         sounds->cleanupSounds();
@@ -284,8 +286,24 @@ void _scene::drawScene(){
         glPopMatrix();
 
         glPushMatrix();
-            player->drawPlayer();
+            if(currentState == PLAYING)
+            {
+                player->drawPlayer();
+            }
+            else if ((currentState == ENDING_SEQUENCE && isVictory == true) || (currentState == GAME_OVER && isVictory == true))
+            {
+                player->drawPlayer();
+            }
         glPopMatrix();
+
+        if(hasPlayedEndingExplosion)
+        {
+            if(gameOverExplosion->isActive())
+            {
+                gameOverExplosion->draw();
+                gameOverExplosion->update(deltaTime);
+            }
+        }
 
         if (debugMode) {
             vec3 playerMin = player->getCollisionBoxMin();
@@ -319,7 +337,8 @@ void _scene::drawScene(){
 
         // Step 2: Bullet-enemy collisions using the grid
         glPushMatrix();
-        if (currentState == PLAYING) {
+        if (currentState == PLAYING)
+        {
             player->updateWeapons(deltaTime, enemies, worldMousePos, sounds);
             player->bullets.erase(
                 std::remove_if(player->bullets.begin(), player->bullets.end(),
@@ -327,54 +346,53 @@ void _scene::drawScene(){
                 player->bullets.end()
             );
         }
-        for (auto& bullet : player->bullets) {
-            if (bullet.isAlive) {
-                bullet.drawBullet(deltaTime);
-                vec3 bulletMin = bullet.getCollisionBoxMin();
-                vec3 bulletMax = bullet.getCollisionBoxMax();
+            for (auto& bullet : player->bullets) {
+                if (bullet.isAlive) {
+                    bullet.drawBullet(deltaTime);
+                    vec3 bulletMin = bullet.getCollisionBoxMin();
+                    vec3 bulletMax = bullet.getCollisionBoxMax();
 
-                // Get potential collisions from the grid
-                AABB bulletAABB = bullet.getAABB();
-                std::vector<_enemy*> potentialEnemies = enemyGrid.getPotentialCollisions(bulletAABB);
+                    // Get potential collisions from the grid
+                    AABB bulletAABB = bullet.getAABB();
+                    std::vector<_enemy*> potentialEnemies = enemyGrid.getPotentialCollisions(bulletAABB);
 
-                if (bullet.weapon.type == LASER) {
-                    for (_enemy* enemy : potentialEnemies) {
-                        if (enemy->isAlive && collision->isOBBCollision(bullet, *enemy)) {
-                            enemy->takeDamage(bullet.weapon.damage * deltaTime, xpOrbs, xpOrbTexture,
-                                              enemyDrops, enemyDropsMagnetTexture, enemyDropsHealthTexture, sounds);
+                    if (bullet.weapon.type == LASER) {
+                        for (_enemy* enemy : potentialEnemies) {
+                            if (enemy->isAlive && collision->isOBBCollision(bullet, *enemy)) {
+                                enemy->takeDamage(bullet.weapon.damage * deltaTime, xpOrbs, xpOrbTexture,
+                                                  enemyDrops, enemyDropsMagnetTexture, enemyDropsHealthTexture, sounds);
+                            }
                         }
-                    }
-                } else if (bullet.weapon.type != ENERGY_FIELD) {
-                    for (_enemy* enemy : potentialEnemies) {
-                        size_t enemyIndex = std::distance(enemies.data(), enemy);
-                        if (enemy->isAlive &&
-                            std::find(bullet.hitEnemies.begin(), bullet.hitEnemies.end(), enemyIndex) ==
-                                bullet.hitEnemies.end()) {
-                            if (collision->isOBBCollision(bullet, *enemy)) {
-                                if (bullet.weapon.type != ROCKET)
-                                {
-                                    enemy->takeDamage(bullet.weapon.damage, xpOrbs, xpOrbTexture,
-                                                      enemyDrops, enemyDropsMagnetTexture, enemyDropsHealthTexture,sounds);
-                                }
-                                bullet.hitEnemies.push_back(enemyIndex);
-                                if (bullet.weapon.type != FLAK)
-                                {
-                                    if (bullet.weapon.type == ROCKET) {
-                                        if (!bullet.hasExploded) {
-                                            bullet.explode(enemies, xpOrbs, xpOrbTexture, enemyDrops,
-                                                           enemyDropsMagnetTexture, enemyDropsHealthTexture,sounds);
-                                        }
-                                    }
+                    } else if (bullet.weapon.type != ENERGY_FIELD) {
+                        for (_enemy* enemy : potentialEnemies) {
+                            size_t enemyIndex = std::distance(enemies.data(), enemy);
+                            if (enemy->isAlive &&
+                                std::find(bullet.hitEnemies.begin(), bullet.hitEnemies.end(), enemyIndex) ==
+                                    bullet.hitEnemies.end()) {
+                                if (collision->isOBBCollision(bullet, *enemy)) {
                                     if (bullet.weapon.type != ROCKET)
                                     {
-                                        bullet.isAlive = false;
+                                        enemy->takeDamage(bullet.weapon.damage, xpOrbs, xpOrbTexture,
+                                                          enemyDrops, enemyDropsMagnetTexture, enemyDropsHealthTexture,sounds);
+                                    }
+                                    bullet.hitEnemies.push_back(enemyIndex);
+                                    if (bullet.weapon.type != FLAK)
+                                    {
+                                        if (bullet.weapon.type == ROCKET) {
+                                            if (!bullet.hasExploded) {
+                                                bullet.explode(enemies, xpOrbs, xpOrbTexture, enemyDrops,
+                                                               enemyDropsMagnetTexture, enemyDropsHealthTexture,sounds);
+                                            }
+                                        }
+                                        if (bullet.weapon.type != ROCKET)
+                                        {
+                                            bullet.isAlive = false;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-
                 if (debugMode) {
                     glPushMatrix();
                         glDisable(GL_TEXTURE_2D);
@@ -401,8 +419,10 @@ void _scene::drawScene(){
         }
 
         glPushMatrix();
-        for (size_t i = 0; i < enemies.size(); i++) {
-            if (currentState == PLAYING) {
+        for (size_t i = 0; i < enemies.size(); i++)
+        {
+            if (currentState == PLAYING)
+            {
                 for (size_t j = i + 1; j < enemies.size(); j++) {
                     vec3 diff = {enemies[i].position.x - enemies[j].position.x, enemies[i].position.y - enemies[j].position.y, 0.0f};
                     float distSq = diff.x * diff.x + diff.y * diff.y;
@@ -434,9 +454,10 @@ void _scene::drawScene(){
                                     player->takeDamage(10.0f, sounds);
                                     damageCooldown = 0.5f;
                                     if (player->currentHp <= 0) {
-                                        currentState = GAME_OVER;
+                                        currentState = ENDING_SEQUENCE;
                                         isVictory = false;
-
+                                        hasPlayedEndingExplosion = false;
+                                        endingTimer = 0.0f;
                                     }
                                 }
                             }
@@ -450,9 +471,11 @@ void _scene::drawScene(){
                                     player->takeDamage(20.0f, sounds);
                                     damageCooldown = 0.5f;
                                     if (player->currentHp <= 0) {
-                                        currentState = GAME_OVER;
+                                        currentState = ENDING_SEQUENCE;
                                         isVictory = false;
-
+                                        hasPlayedEndingExplosion = false;
+                                        endingTimer = 0.0f;
+                                        if (!hasPlayedEndingExplosion) {
                                     }
                                 }
                             }
@@ -460,7 +483,7 @@ void _scene::drawScene(){
                     }
                 }
             }
-
+        }
             enemies[i].drawEnemy(enemies[i].enemyTextureLoader->tex, deltaTime);
 
             if (debugMode && enemies[i].isAlive) {
@@ -482,32 +505,46 @@ void _scene::drawScene(){
         }
         glPopMatrix();
 
-        if (damageCooldown > 0.0f && currentState == PLAYING) {
+        if (damageCooldown > 0.0f && currentState == PLAYING)
+        {
             damageCooldown -= deltaTime;
             if (damageCooldown < 0.0f) damageCooldown = 0.0f;
         }
 
-        for (auto& orb : xpOrbs) {
-            orb.update(deltaTime, player->playerPosition, xpPickupRange);
+        for (auto& orb : xpOrbs)
+        {
+            if(currentState == PLAYING)
+            {
+                orb.update(deltaTime, player->playerPosition, xpPickupRange);
+            }
             orb.drawOrb();
         }
 
-        for (auto& orb : xpOrbs) {
-            if (orb.isActive && collision->isOBBCollision(*player, orb)) {
-                orb.isActive = false;
-                if (player->gainXP(1)) {
-                    showUpgradeMenu();
+        if(currentState == PLAYING)
+        {
+            for (auto& orb : xpOrbs)
+            {
+                if (orb.isActive && collision->isOBBCollision(*player, orb))
+                {
+                    orb.isActive = false;
+                    if (player->gainXP(1))
+                    {
+                        showUpgradeMenu();
+                    }
                 }
             }
         }
-
         xpOrbs.erase(
             remove_if(xpOrbs.begin(), xpOrbs.end(), [](const _xpOrb& o) { return !o.isActive; }),
             xpOrbs.end()
         );
 
-        for (auto& drop : enemyDrops) {
-            drop.update(deltaTime, player->playerPosition, xpPickupRange, magnetActive, magnetTimer, player->currentHp, player->maxHp, player->hasShield, player->shieldTimer);
+        for (auto& drop : enemyDrops)
+        {
+            if(currentState == PLAYING)
+            {
+                drop.update(deltaTime, player->playerPosition, xpPickupRange, magnetActive, magnetTimer, player->currentHp, player->maxHp, player->hasShield, player->shieldTimer);
+            }
             drop.drawDrop();
         }
 
@@ -526,9 +563,10 @@ void _scene::drawScene(){
             }
             if (!bossAlive) {
                 bossDefeated = true;
-                currentState = GAME_OVER;
+                currentState = ENDING_SEQUENCE;
                 isVictory = true;
-
+                hasPlayedEndingExplosion = false;
+                endingTimer = 0.0f;
             }
         }
 
@@ -737,7 +775,52 @@ void _scene::drawScene(){
             upgradeSlot++;
             if (upgradeSlot >= 5) break;
         }
+        if (currentState == GAME_OVER)
+        {
+            // Use same HUD projection
+            glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+            gluOrtho2D(0, dim.x, 0, dim.y);
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+            glLoadIdentity();
 
+            drawGameOverScreen();
+
+            glMatrixMode(GL_MODELVIEW);
+            glPopMatrix();
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+            glMatrixMode(GL_MODELVIEW);
+        }
+        if (currentState == ENDING_SEQUENCE)
+        {
+            endingTimer += deltaTime;
+
+            if (!hasPlayedEndingExplosion)
+            {
+                if (!isVictory)
+                {
+                    player->weapons.clear();
+                    player->bullets.clear();
+                    activeUpgrades.clear();
+                    gameOverExplosion->spawnExplosion(player->playerPosition, 100, 2.0f);
+                    sounds->play(sounds->rocketExplosionSource);
+                    hasPlayedEndingExplosion = true;
+                }
+                else
+                {
+                    gameOverExplosion->spawnExplosion(bossEnemy.position, 300, 4.0f);
+                    sounds->play(sounds->rocketExplosionSource);
+                    hasPlayedEndingExplosion = true;
+                }
+            }
+
+            if (endingTimer >= endingDelay) {
+                currentState = GAME_OVER;
+            }
+        }
         // Upgrade Menu
         if (currentState == UPGRADE_MENU) {
             glDisable(GL_TEXTURE_2D);
@@ -893,38 +976,6 @@ void _scene::drawScene(){
         glPushMatrix();
         glLoadIdentity();
         drawMainMenu();
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-    }
-    else if (currentState == GAME_OVER) {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(45, (GLfloat)dim.x / (GLfloat)dim.y, 0.1, 100.0);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        vec3 cameraPos = {0.0f, 0.0f, 70.0f};
-        vec3 lookAtPos = {0.0f, 0.0f, 50.0f};
-        gluLookAt(cameraPos.x, cameraPos.y, cameraPos.z,
-                  lookAtPos.x, lookAtPos.y, lookAtPos.z,
-                  0, 1, 0);
-
-        glPushMatrix();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        prlx1->drawBackground(dim.x, dim.y, {0.0f, 0.0f, 50.0f});
-        glPopMatrix();
-
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        gluOrtho2D(0, dim.x, 0, dim.y);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-        drawGameOverScreen();
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
         glMatrixMode(GL_PROJECTION);
@@ -1168,7 +1219,6 @@ void _scene::reSize(GLint width, GLint height){
 }
 
 void _scene::processKeyboardInput() {
-    updateDeltaTime();
     gameTime += deltaTime;
 
     POINT mousePos;
@@ -1286,7 +1336,7 @@ void _scene::updateEnemySpawning()
     if (currentState != PLAYING || bossSpawned) return;
 
     // Clear the screen at 290 seconds
-    if (elapsedTime >= 295.0f && !clearScreenDone) {
+    if (elapsedTime >= 297.0f && !clearScreenDone) {
         clearScreen();
         clearScreenDone = true;
     }
@@ -1438,7 +1488,7 @@ void _scene::updateDeltaTime() {
     QueryPerformanceCounter(&currentTime);
 
     static bool wasPausedLastFrame = false;
-    if (currentState == PLAYING && !isPaused) {
+    if ((currentState == PLAYING && !isPaused) || currentState == ENDING_SEQUENCE) {
         if (wasPausedLastFrame) {
             lastTime = currentTime;
             deltaTime = 0.0f;

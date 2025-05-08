@@ -117,7 +117,8 @@ class _scene
             GAME_OVER,
             HELP_SCREEN,
             CREDITS_SCREEN,
-            UPGRADE_MENU
+            UPGRADE_MENU,
+            ENDING_SEQUENCE
         };
     GameState currentState = MAIN_MENU;
     GameState previousState;
@@ -158,6 +159,14 @@ class _scene
     void updateMagnet(float deltaTime); // New method to update magnet state
 
     SpatialHashGrid enemyGrid{2.0f}; // Add grid with cell size 2.0f
+
+    // New members for death explosion
+    _particleSystem* gameOverExplosion = nullptr; // Explosion effect for player or boss
+    bool explosionTriggered = false; // Track if explosion has been triggered
+    bool hasPlayedEndingExplosion = false;
+    float endingTimer = 0.0f;
+    const float endingDelay = 2.0f; // seconds before showing menu
+
     protected:
 
     private:

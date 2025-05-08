@@ -59,7 +59,8 @@ void _enemy::drawEnemy(GLuint tex, float deltaTime) {
             glEnd();
         glPopMatrix();
     }
-    if (explosionEffect->isActive()) {
+    if (explosionEffect->isActive())
+    {
         explosionEffect->update(deltaTime);
         explosionEffect->draw();
     }

@@ -16,9 +16,8 @@ public:
     void draw();
 
     bool isActive() const { return !particles.empty(); }
-
-private:
     std::vector<Particle> particles;
+private:
     _textureLoader* particleTexture;
 };
 

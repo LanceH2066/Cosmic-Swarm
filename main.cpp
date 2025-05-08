@@ -338,6 +338,7 @@ void GameLoop()
             if (msg.message == WM_QUIT) return;
         }
 
+        Scene->updateDeltaTime();      // Always update deltaTime
         Scene->processKeyboardInput();
         Scene->drawScene();
         SwapBuffers(hDC);
